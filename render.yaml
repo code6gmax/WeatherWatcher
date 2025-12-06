@@ -13,6 +13,7 @@ services:
           property: connectionString
       - key: REDIS_URL
         fromService:
+          type: redis             # <--- ADDED THIS
           name: weather-redis
           property: connectionString
 
@@ -30,6 +31,7 @@ services:
           property: connectionString
       - key: REDIS_URL
         fromService:
+          type: redis             # <--- ADDED THIS
           name: weather-redis
           property: connectionString
 
