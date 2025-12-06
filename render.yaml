@@ -8,11 +8,13 @@ services:
     startCommand: cd backend && ./start.sh
     envVars:
       - key: DATABASE_URL
-        fromDatabase: weather-db
-        property: connectionString
+        fromDatabase:
+          name: weather-db
+          property: connectionString
       - key: REDIS_URL
-        fromService: weather-redis
-        property: connectionString
+        fromService:
+          name: weather-redis
+          property: connectionString
 
   # 2. The Worker (Celery + Beat)
   - type: worker
@@ -23,13 +25,15 @@ services:
     startCommand: cd backend && celery -A tasks worker --beat --loglevel=info
     envVars:
       - key: DATABASE_URL
-        fromDatabase: weather-db
-        property: connectionString
+        fromDatabase:
+          name: weather-db
+          property: connectionString
       - key: REDIS_URL
-        fromService: weather-redis
-        property: connectionString
+        fromService:
+          name: weather-redis
+          property: connectionString
 
-  # 3. The Broker (Redis) - MOVED HERE under the main "services" block
+  # 3. The Broker (Redis)
   - type: redis
     name: weather-redis
     plan: free
