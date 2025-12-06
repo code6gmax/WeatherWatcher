@@ -1,7 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
-# Run Database Migrations (Optional here since we used create_all in main.py, 
-# but good practice for future)
+# 1. Start Celery Worker & Beat in the background
+# The '&' symbol tells Linux to run this in the background so it doesn't block the API
+celery -A tasks worker --beat --loglevel=info &
 
-# Start the Gunicorn Server
-exec gunicorn -k uvicorn.workers.UvicornWorker -w 1 -b 0.0.0.0:8000 main:app
+# 2. Start the FastAPI Server (Foreground)
+# We use the $PORT environment variable which Render provides automatically
+exec gunicorn -k uvicorn.workers.UvicornWorker -w 1 -b 0.0.0.0:$PORT main:app
