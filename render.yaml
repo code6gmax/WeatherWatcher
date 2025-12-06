@@ -15,13 +15,11 @@ services:
         property: connectionString
 
   # 2. The Worker (Celery + Beat)
-  # We run worker AND beat together to save money (1 service instead of 2)
   - type: worker
     name: weather-worker
     env: python
     plan: free
     buildCommand: pip install -r backend/requirements.txt
-    # The -B flag runs the "Beat" (scheduler) inside the worker
     startCommand: cd backend && celery -A tasks worker --beat --loglevel=info
     envVars:
       - key: DATABASE_URL
@@ -31,16 +29,15 @@ services:
         fromService: weather-redis
         property: connectionString
 
-databases:
-  # 3. The Database (Postgres)
-  - name: weather-db
-    plan: free
-    databaseName: weather
-    user: weather_user
-
-services:
-  # 4. The Broker (Redis)
+  # 3. The Broker (Redis) - MOVED HERE under the main "services" block
   - type: redis
     name: weather-redis
     plan: free
     ipAllowList: [] # Only internal services can connect
+
+databases:
+  # 4. The Database (Postgres)
+  - name: weather-db
+    plan: free
+    databaseName: weather
+    user: weather_user
